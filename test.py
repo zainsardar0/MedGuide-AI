@@ -1,6 +1,7 @@
-from app.agent import graph 
+from app.agent import get_graph, close_graph
 
 
+graph = get_graph()
 config = {"configurable": {"thread_id": "user_123"}}
 
 result = graph.invoke(
@@ -17,3 +18,4 @@ result = graph.invoke(
 )
 
 print("Final Result:", result)
+close_graph()

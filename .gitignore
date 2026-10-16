@@ -218,3 +218,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Project-specific: runtime conversation memory (SQLite checkpointer).
+medical_memory.db

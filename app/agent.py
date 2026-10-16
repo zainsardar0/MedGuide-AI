@@ -1,4 +1,3 @@
-
 import sqlite3
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
@@ -83,8 +82,28 @@ builder.add_conditional_edges('route',lambda s:s['route'],{'web':'web','answer':
 builder.add_edge('web','answer')
 builder.add_edge('answer',END)
 
-# SQLite persistent state memory
-conn = sqlite3.connect("medical_memory.db", check_same_thread=False)
-memory = SqliteSaver(conn)
+# SQLite persistent state memory.
+# The checkpointer is created lazily on first use (not at import time) so that
+# importing this module has no side effects, and it is closed on app shutdown.
+_graph = None
 
-graph = builder.compile(checkpointer=memory)
+
+def get_graph():
+    """Compile the agent graph on first use, creating the SQLite checkpointer."""
+    global _graph
+    if _graph is None:
+        conn = sqlite3.connect("medical_memory.db", check_same_thread=False)
+        memory = SqliteSaver(conn)
+        compiled = builder.compile(checkpointer=memory)
+        compiled._sqlite_conn = conn  # keep the connection alive for the app lifetime
+        _graph = compiled
+    return _graph
+
+
+def close_graph():
+    """Close the SQLite connection. Call on application shutdown."""
+    global _graph
+    conn = getattr(_graph, "_sqlite_conn", None) if _graph else None
+    if conn is not None:
+        conn.close()
+    _graph = None

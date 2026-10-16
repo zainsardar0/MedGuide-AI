@@ -1,6 +1,7 @@
 import base64
 import io
 import secrets
+from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.responses import HTMLResponse, Response
@@ -10,10 +11,19 @@ from pydantic import BaseModel, Field
 from openai import OpenAI
 from uuid import uuid4
 from app.config import settings
-from app.agent import graph
+from app.agent import get_graph, close_graph
 
 ROOT=Path(__file__).resolve().parent.parent
-app=FastAPI(title='Medical Agent Educational API',version='1.0.0')
+
+
+@asynccontextmanager
+async def lifespan(app):
+    get_graph()  # initialize the agent + SQLite checkpointer once at startup
+    yield
+    close_graph()
+
+
+app=FastAPI(title='Medical Agent Educational API',version='1.0.0',lifespan=lifespan)
 app.add_middleware(CORSMiddleware,allow_origins=settings.allowed_origins.split(','),allow_credentials=False,allow_methods=['GET','POST'],allow_headers=['Authorization','Content-Type'])
 app.mount('/static',StaticFiles(directory=ROOT/'static'),name='static')
 
@@ -74,7 +84,7 @@ def chat(
     try:
         observation=inspect_image(payload.image_data)
 
-        state=graph.invoke(
+        state=get_graph().invoke(
             {
                 'question':payload.message,
                 'history':history,
