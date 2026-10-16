@@ -23,8 +23,9 @@ def embed(texts):
 
 
 
-def search_kb(query, top_k=5):
+def search_kb(query, top_k=None):
+    top_k = top_k or settings.kb_top_k
     index = ensure_index()
     vector = embed([query])[0]
     result = index.query(vector=vector, top_k=top_k, include_metadata=True)
-    return [{'page': m.metadata.get('page'), 'text': m.metadata.get('text',''), 'score': round(m.score,3), 'source': 'Gale Encyclopedia (2002)'} for m in result.matches if m.score >= 0.30]
+    return [{'page': m.metadata.get('page'), 'text': m.metadata.get('text',''), 'score': round(m.score,3), 'source': f'{settings.kb_name} ({settings.kb_year})'} for m in result.matches if m.score >= settings.kb_min_score]

@@ -18,6 +18,8 @@ ROOT=Path(__file__).resolve().parent.parent
 
 @asynccontextmanager
 async def lifespan(app):
+    if settings.app_env == 'production' and not settings.api_token:
+        raise RuntimeError('API_TOKEN must be set when APP_ENV=production')
     get_graph()  # initialize the agent + SQLite checkpointer once at startup
     yield
     close_graph()
