@@ -87,10 +87,12 @@ def _confidence_payload(state):
     top = kb[0]['score'] if kb else None
     low = (
         state.get('intent') == 'medical'
+        and not state.get('cache_hit')
         and not state.get('web')
         and (not kb or kb[0]['score'] < settings.web_fallback_score)
     )
-    return {'kb_top_score': top, 'route': state.get('route', ''), 'low_confidence': bool(low)}
+    return {'kb_top_score': top, 'route': state.get('route', ''),
+            'low_confidence': bool(low), 'cache_hit': bool(state.get('cache_hit'))}
 
 
 @app.get('/',response_class=HTMLResponse)
@@ -134,7 +136,8 @@ def chat(
                 'route':'',
                 'intent':'',
                 'has_image':bool(payload.image_data),
-                'validation_flags':[]
+                'validation_flags':[],
+                'cache_hit':False
             },
             config=config
         )
@@ -188,7 +191,8 @@ def chat_stream(
         'route':'',
         'intent':'',
         'has_image':bool(payload.image_data),
-        'validation_flags':[]
+        'validation_flags':[],
+        'cache_hit':False
     }
     result: dict = {}
 

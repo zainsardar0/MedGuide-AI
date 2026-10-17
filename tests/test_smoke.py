@@ -6,6 +6,7 @@ which Muhammad runs locally with his own keys.
 """
 
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -149,7 +150,7 @@ def test_confidence_payload():
     confident = {"intent": "medical", "route": "answer",
                  "kb": [{"page": 1, "score": 0.85, "text": "t"}], "web": []}
     assert _confidence_payload(confident) == {
-        "kb_top_score": 0.85, "route": "answer", "low_confidence": False}
+        "kb_top_score": 0.85, "route": "answer", "low_confidence": False, "cache_hit": False}
 
     web_grounded = {"intent": "medical", "route": "web",
                     "kb": [{"page": 1, "score": 0.5, "text": "t"}],
@@ -198,3 +199,108 @@ def test_stream_endpoint_registered():
     paths = [r.path for r in app.routes]
     assert "/api/chat/stream" in paths
     assert "/api/chat" in paths
+
+
+# --- Step 10: semantic cache (all keyless via monkeypatched embeddings) ---
+
+VEC_A = [1.0] + [0.0] * 9
+VEC_ORTH = [0.0, 1.0] + [0.0] * 8
+
+
+def _cache_module(monkeypatch, tmp_path, embed_fn):
+    import app.semantic_cache as sc
+    monkeypatch.setattr(sc, "_db_path", lambda: str(tmp_path / "cache.db"))
+    monkeypatch.setattr(sc, "embed_query", embed_fn)
+    return sc
+
+
+def test_semantic_cache_roundtrip(monkeypatch, tmp_path):
+    sc = _cache_module(monkeypatch, tmp_path, lambda t: VEC_A)
+    kb = [{"page": 303, "text": "t", "score": 0.9}]
+    sc.store_cached("What is a migraine?", "Migraines hurt. [PDF p.303]", kb=kb)
+    hit = sc.lookup_cached("  WHAT is a migraine? ")  # normalization: case/space
+    assert hit is not None
+    answer, hit_kb, hit_web, score = hit
+    assert answer == "Migraines hurt. [PDF p.303]"
+    assert hit_kb == kb and hit_web == []
+    assert score == pytest.approx(1.0)
+
+
+def test_semantic_cache_miss_and_threshold(monkeypatch, tmp_path):
+    sc = _cache_module(
+        monkeypatch, tmp_path,
+        lambda t: VEC_ORTH if "unrelated" in t else VEC_A,
+    )
+    sc.store_cached("What is a migraine?", "cached answer")
+    # Orthogonal vector: cosine 0 -> miss.
+    assert sc.lookup_cached("something completely unrelated") is None
+    # Near-miss vector: cosine exactly 0.96 with VEC_A.
+    near = [0.96, math.sqrt(1 - 0.96 ** 2)] + [0.0] * 8
+    monkeypatch.setattr(sc, "embed_query", lambda t: near)
+    assert sc.lookup_cached("what is a migraine?", threshold=0.95) is not None
+    assert sc.lookup_cached("what is a migraine?", threshold=0.97) is None
+
+
+def test_semantic_cache_ttl(monkeypatch, tmp_path):
+    import sqlite3
+    import time as time_mod
+
+    sc = _cache_module(monkeypatch, tmp_path, lambda t: VEC_A)
+    sc.store_cached("What is a migraine?", "cached answer")
+    # Age the row beyond the TTL.
+    conn = sqlite3.connect(str(tmp_path / "cache.db"))
+    conn.execute(
+        "UPDATE semantic_cache SET created_at = ?",
+        (time_mod.time() - 31 * 86400,),
+    )
+    conn.commit()
+    conn.close()
+    assert sc.lookup_cached("what is a migraine?", ttl_days=30) is None
+
+
+def test_cache_lookup_node_safety(monkeypatch):
+    from app.agent import cache_lookup
+    import app.semantic_cache as sc
+
+    def boom(t):
+        raise AssertionError("must not embed")
+
+    # Image questions never touch the cache.
+    monkeypatch.setattr(sc, "embed_query", boom)
+    assert cache_lookup(
+        {"question": "what is this?", "has_image": True, "intent": "medical"}
+    ) == {"cache_hit": False}
+    # Embedding failure degrades to a miss, never an exception.
+    def down(t):
+        raise RuntimeError("llm down")
+
+    monkeypatch.setattr(sc, "embed_query", down)
+    assert cache_lookup(
+        {"question": "what is migraine?", "has_image": False, "intent": "medical"}
+    ) == {"cache_hit": False}
+    # Disabled cache never embeds either.
+    monkeypatch.setattr(sc, "embed_query", boom)
+    monkeypatch.setattr(settings, "semantic_cache_enabled", False)
+    try:
+        assert cache_lookup(
+            {"question": "q", "has_image": False, "intent": "medical"}
+        ) == {"cache_hit": False}
+    finally:
+        monkeypatch.setattr(settings, "semantic_cache_enabled", True)
+
+
+def test_full_graph_cache_hit_skips_retrieval(monkeypatch, tmp_path, graph):
+    import app.semantic_cache as sc
+
+    _cache_module(monkeypatch, tmp_path, lambda t: VEC_A)
+    sc.store_cached("What is a migraine?", "Cached migraine answer. [PDF p.303]")
+    state = graph.invoke(
+        {"question": "What is a migraine?", "history": [],
+         "image_description": "", "kb": [], "web": [], "answer": "", "route": "",
+         "intent": "", "has_image": False, "validation_flags": [],
+         "cache_hit": False},
+        config={"configurable": {"thread_id": "ci-cache"}},
+    )
+    assert state["cache_hit"] is True
+    assert state["answer"] == "Cached migraine answer. [PDF p.303]"
+    assert state["kb"] == [] and state["web"] == []  # no retrieval spend

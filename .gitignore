@@ -224,3 +224,5 @@ evals/results.json
 
 medical_memory.db-shm
 medical_memory.db-wal
+
+semantic_cache.db

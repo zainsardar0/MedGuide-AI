@@ -136,6 +136,7 @@ article.bot strong{font-weight:700}
 .badge.web{background:#EFF6FF;color:#1D4ED8}
 .badge.emg{background:#FEE2E2;color:#DC2626}
 .badge.low{background:#FEF3C7;color:#92400E}
+.badge.cache{background:#E0F2F1;color:#0F766E}
 .sources{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)}
 .chip{
   display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;

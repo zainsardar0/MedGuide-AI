@@ -10,6 +10,7 @@ from tavily import TavilyClient
 from app.config import settings
 from app.knowledge import search_kb
 from app import guardrails
+from app.semantic_cache import lookup_cached, store_cached
 from app.guardrails import (
     is_emergency,
     is_greeting,
@@ -62,6 +63,7 @@ class State(TypedDict):
     intent: str            # emergency | greeting | off_topic | medical
     has_image: bool
     validation_flags: list
+    cache_hit: bool        # True when the answer came from the semantic cache
 
 
 # --- Input guardrail -------------------------------------------------------
@@ -106,6 +108,32 @@ def greeting_respond(state):
 
 def reject_offtopic(state):
     return {"answer": OFFTOPIC_REFUSAL}
+
+
+def cache_lookup(state):
+    """Semantic cache: serve repeat questions with no retrieval/LLM spend.
+
+    Safety: only the medical intent without an image is eligible (a vague
+    caption like "what is this?" must never match another user's image
+    question), and any embedding failure degrades to a plain miss — the
+    question just takes the normal slow path.
+    """
+    if (
+        state.get('intent') != 'medical'
+        or state.get('has_image')
+        or not settings.semantic_cache_enabled
+    ):
+        return {'cache_hit': False}
+    try:
+        hit = lookup_cached(state.get('question', ''))
+    except Exception as exc:
+        print(f"Semantic cache lookup failed: {exc!r}", flush=True)
+        return {'cache_hit': False}
+    if hit is None:
+        return {'cache_hit': False}
+    answer, kb, web, score = hit
+    print(f"Semantic cache hit (similarity {score:.3f})", flush=True)
+    return {'answer': answer, 'kb': kb, 'web': web, 'cache_hit': True, 'route': 'cache'}
 
 
 # --- Existing RAG pipeline -------------------------------------------------
@@ -233,6 +261,21 @@ def validate(state):
             flags.append("regeneration_failed")
     if flags:
         print(f"Output validation flags: {flags}", flush=True)
+    # Semantic cache: remember clean, KB-grounded answers for repeat questions.
+    # Web-grounded answers stay fresh; image questions are never cached.
+    if (
+        not flags
+        and state.get('intent') == 'medical'
+        and state.get('route') == 'answer'
+        and not state.get('has_image')
+        and settings.semantic_cache_enabled
+        and answer
+    ):
+        try:
+            store_cached(state.get('question', ''), answer,
+                         kb=state.get('kb', []), web=state.get('web', []))
+        except Exception as exc:
+            print(f"Semantic cache store failed: {exc!r}", flush=True)
     return {"answer": answer, "validation_flags": flags}
 
 
@@ -246,14 +289,18 @@ builder.add_node('route',route)
 builder.add_node('web',web_search)
 builder.add_node('answer',answer)
 builder.add_node('validate',validate)
+builder.add_node('cache_lookup',cache_lookup)
 
 builder.set_entry_point('guard')
 builder.add_conditional_edges('guard', lambda s: s['intent'], {
     'emergency': 'emergency_respond',
     'greeting': 'greeting_respond',
     'off_topic': 'reject',
-    'medical': 'retrieve',
+    'medical': 'cache_lookup',
 })
+builder.add_conditional_edges('cache_lookup',
+    lambda s: 'hit' if s.get('cache_hit') else 'miss',
+    {'hit': END, 'miss': 'retrieve'})
 builder.add_edge('emergency_respond', END)
 builder.add_edge('greeting_respond', END)
 builder.add_edge('reject', END)

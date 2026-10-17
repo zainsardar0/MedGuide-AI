@@ -77,7 +77,7 @@ function md(src) {
 const FOOTER_RE = /\n\n\*\*Sources\*\*[\s\S]*$/;
 const stripFooter = text => text.replace(FOOTER_RE, '').trimEnd();
 
-function badgeFor(tools, intent, low, score) {
+function badgeFor(tools, intent, low, score, cached) {
   let b = '';
   if (intent === 'emergency') b = '<span class="badge emg">🚨 Emergency</span>';
   else if ((tools || []).includes('tavily')) b = '<span class="badge web">🌐 Web research</span>';
@@ -85,6 +85,7 @@ function badgeFor(tools, intent, low, score) {
     const tip = (typeof score === 'number') ? ` title="top KB match: relevance ${score.toFixed(2)}"` : '';
     b = `<span class="badge kb"${tip}>📚 Knowledge base</span>`;
   }
+  if (cached) b += (b ? ' ' : '') + '<span class="badge cache">⚡ Cached answer</span>';
   if (low) b += ' <span class="badge low">⚠ Limited evidence</span>';
   return b;
 }
@@ -106,10 +107,10 @@ function bubbleUser(text) {
   return el;
 }
 
-function bubbleBot({ text, sources = [], tools = [], intent = '', low = false, score = null }) {
+function bubbleBot({ text, sources = [], tools = [], intent = '', low = false, score = null, cached = false }) {
   const el = document.createElement('article');
   el.className = 'bot' + (intent === 'emergency' ? ' emergency' : '');
-  const badge = badgeFor(tools, intent, low, score);
+  const badge = badgeFor(tools, intent, low, score, cached);
   const chips = chipsFor(sources);
   el.innerHTML =
     (intent === 'emergency' ? '<div class="emg-head">🚨 Possible emergency</div>' : '') +
@@ -178,7 +179,7 @@ function renderMessages() {
   }
   for (const m of msgs) {
     if (m.role === 'user') bubbleUser(m.text);
-    else bubbleBot({ text: m.text, sources: m.sources, tools: m.tools, intent: m.intent, low: m.low, score: m.score });
+    else bubbleBot({ text: m.text, sources: m.sources, tools: m.tools, intent: m.intent, low: m.low, score: m.score, cached: m.cached });
   }
 }
 
@@ -326,9 +327,9 @@ $('chatForm').addEventListener('submit', async e => {
     if (!done) throw new Error('Stream ended unexpectedly');
     pending.remove();
     const finalText = done.answer || acc;
-    const low = !!done.low_confidence, score = (typeof done.kb_top_score === 'number') ? done.kb_top_score : null;
-    bubbleBot({ text: finalText, sources: done.sources, tools: done.tools, intent: done.intent, low, score });
-    conv.messages.push({ role: 'bot', text: finalText, sources: done.sources || [], tools: done.tools || [], intent: done.intent || '', low, score });
+    const low = !!done.low_confidence, score = (typeof done.kb_top_score === 'number') ? done.kb_top_score : null, cached = !!done.cache_hit;
+    bubbleBot({ text: finalText, sources: done.sources, tools: done.tools, intent: done.intent, low, score, cached });
+    conv.messages.push({ role: 'bot', text: finalText, sources: done.sources || [], tools: done.tools || [], intent: done.intent || '', low, score, cached });
     lastAnswer = stripFooter(finalText);
     history.push({ role: 'user', content: message }, { role: 'assistant', content: finalText });
     history = history.slice(-10);

@@ -18,6 +18,8 @@ EXPOSE 8000
 
 # Conversation memory lives here; mount a volume at /data to persist it.
 ENV MEDICAL_MEMORY_DB=/data/medical_memory.db
+# Semantic cache lives here too, so repeat-question answers survive restarts.
+ENV SEMANTIC_CACHE_DB=/data/semantic_cache.db
 
 # API keys come from the environment (compose reads .env) — never baked in.
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

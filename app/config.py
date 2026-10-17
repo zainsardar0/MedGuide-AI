@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     kb_min_score: float = 0.30
     web_fallback_score: float = 0.62
 
+    # Semantic cache (Step 10): serve repeat questions without retrieval/LLM spend
+    semantic_cache_enabled: bool = True
+    semantic_cache_threshold: float = 0.95
+    semantic_cache_ttl_days: int = 30
+
     # Knowledge-base description, injected into the agent's system prompt
     kb_name: str = 'Gale Encyclopedia of Medicine'
     kb_year: str = '2002'
