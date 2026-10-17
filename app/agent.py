@@ -160,7 +160,7 @@ def _attach_sources(body, state):
     return body.rstrip() + "\n" + footer
 
 
-def answer(state):
+def answer(state, config=None):
     context = '\n'.join(f"[PDF p.{x['page']}] {x['text']}" for x in state['kb'])
     websites = '\n'.join(f"{x['title']} ({x['url']}): {x['content']}" for x in state.get('web',[]))
     history=[]
@@ -168,8 +168,24 @@ def answer(state):
         history.append(HumanMessage(content=msg['content']) if msg['role']=='user' else AIMessage(content=msg['content']))
     user = f"Question: {state['question']}\nVisual observations (not diagnosis): {state.get('image_description','None')}\nHistorical PDF excerpts:\n{context or 'No relevant PDF excerpts'}\nExternal results:\n{websites or 'No external results'}"
     llm=ChatOpenAI(model=settings.openai_chat_model,temperature=0.1,api_key=settings.openai_api_key,timeout=45,max_retries=1)
-    response=llm.invoke([SystemMessage(content=SYSTEM),*history,HumanMessage(content=user)])
-    return {'answer': _attach_sources(response.content, state)}
+    messages=[SystemMessage(content=SYSTEM),*history,HumanMessage(content=user)]
+    # Token streaming: when the caller (the /api/chat/stream endpoint) provides a
+    # queue via config, push tokens as they arrive so the UI can render live.
+    token_queue = None
+    try:
+        token_queue = (config or {}).get('configurable', {}).get('token_queue')
+    except Exception:
+        token_queue = None
+    if token_queue is not None:
+        parts = []
+        for chunk in llm.stream(messages):
+            if chunk.content:
+                parts.append(chunk.content)
+                token_queue.put({'type': 'token', 'text': chunk.content})
+        body = ''.join(parts)
+    else:
+        body = llm.invoke(messages).content
+    return {'answer': _attach_sources(body, state)}
 
 
 # --- Output guardrail ------------------------------------------------------

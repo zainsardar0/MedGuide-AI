@@ -1,10 +1,13 @@
 import base64
 import io
+import json
+import queue
 import secrets
+import threading
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -56,6 +59,40 @@ def inspect_image(data):
     return result.choices[0].message.content or ''
 
 
+def _sources_payload(state):
+    kb = state.get('kb', [])
+    web = state.get('web', [])
+    return (
+        [{'type': 'pdf', 'page': x['page'], 'score': x['score'], 'text': x['text'][:600]} for x in kb]
+        + [{'type': 'web', 'url': x['url'], 'title': x['title']} for x in web]
+    )
+
+
+def _tools_payload(state, observation):
+    return (
+        (['pinecone'] if state.get('kb') else [])
+        + (['tavily'] if state.get('route') == 'web' and settings.tavily_api_key else [])
+        + (['vision'] if observation else [])
+    )
+
+
+def _confidence_payload(state):
+    """Honest evidence signals for the UI.
+
+    low_confidence is True when a medical answer was generated with little to
+    ground it: no web results and KB missing or too weak to answer directly.
+    Guardrail fast-paths (emergency/greeting/off-topic) are not graded.
+    """
+    kb = state.get('kb', [])
+    top = kb[0]['score'] if kb else None
+    low = (
+        state.get('intent') == 'medical'
+        and not state.get('web')
+        and (not kb or kb[0]['score'] < settings.web_fallback_score)
+    )
+    return {'kb_top_score': top, 'route': state.get('route', ''), 'low_confidence': bool(low)}
+
+
 @app.get('/',response_class=HTMLResponse)
 def home():
     return (ROOT/'templates'/'index.html').read_text(encoding='utf-8')
@@ -105,9 +142,10 @@ def chat(
         return {
             'answer':state['answer'],
             'intent':state.get('intent',''),
-            'sources': [{'type':'pdf','page':x['page'],'score':x['score']} for x in state['kb']]+[{'type':'web','url':x['url'],'title':x['title']} for x in state['web']],
-            'tools': ['pinecone']+(['tavily'] if state['route']=='web' and settings.tavily_api_key else [])+(['vision'] if observation else []),
-            'conversation_id':thread_id
+            'sources': _sources_payload(state),
+            'tools': _tools_payload(state, observation),
+            'conversation_id':thread_id,
+            **_confidence_payload(state),
         }
 
     except HTTPException:
@@ -115,6 +153,75 @@ def chat(
     except Exception as exc:
         print('Chat error:',repr(exc),flush=True)
         raise HTTPException(502,'AI service failed. Check server logs, credentials, Pinecone index, and connectivity.')
+
+
+@app.post('/api/chat/stream')
+def chat_stream(
+    payload: ChatRequest,
+    authorization: str | None = Header(default=None),
+    conversation_id: str | None = Header(default=None, alias='X-Conversation-ID')
+):
+    """Server-sent events stream of the answer.
+
+    Events: {"type":"token","text":"..."} as the answer node generates,
+    then {"type":"done", ...full payload...}. Guardrail fast-paths
+    (emergency/greeting/off-topic) send no tokens — just the done event.
+    """
+    auth(authorization)
+
+    if not settings.openai_api_key or not settings.pinecone_api_key:
+        raise HTTPException(503,'Set OPENAI_API_KEY and PINECONE_API_KEY in .env')
+
+    history=[x for x in payload.history if x.get('role') in ('user','assistant') and isinstance(x.get('content'),str)][:10]
+    thread_id = conversation_id or str(uuid4())
+    token_q: queue.Queue = queue.Queue()
+    config = {"configurable": {"thread_id": thread_id, "token_queue": token_q}}
+    observation=inspect_image(payload.image_data)
+
+    input_state = {
+        'question':payload.message,
+        'history':history,
+        'image_description':observation,
+        'kb':[],
+        'web':[],
+        'answer':'',
+        'route':'',
+        'intent':'',
+        'has_image':bool(payload.image_data),
+        'validation_flags':[]
+    }
+    result: dict = {}
+
+    def run():
+        try:
+            result['state'] = get_graph().invoke(input_state, config=config)
+        except Exception as exc:
+            print('Chat stream error:',repr(exc),flush=True)
+            token_q.put({'type':'error','detail':'AI service failed. Check server logs, credentials, Pinecone index, and connectivity.'})
+        finally:
+            token_q.put({'type':'end'})
+
+    threading.Thread(target=run, daemon=True).start()
+
+    def gen():
+        while True:
+            item = token_q.get()
+            if item.get('type') == 'end':
+                break
+            yield f"data: {json.dumps(item)}\n\n"
+        st = result.get('state') or {}
+        done_payload = {
+            'type': 'done',
+            'answer': st.get('answer', ''),
+            'intent': st.get('intent', ''),
+            'sources': _sources_payload(st),
+            'tools': _tools_payload(st, observation),
+            'conversation_id': thread_id,
+        }
+        done_payload.update(_confidence_payload(st))
+        yield 'data: ' + json.dumps(done_payload) + '\n\n'
+
+    return StreamingResponse(gen(), media_type='text/event-stream')
 
 
 @app.post('/api/transcribe')
