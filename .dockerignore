@@ -1,0 +1,12 @@
+# Keep secrets and local junk out of the build context / image.
+.venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.env
+medical_memory.db
+evals/results.json
+tests/
+.vscode/
+.DS_Store

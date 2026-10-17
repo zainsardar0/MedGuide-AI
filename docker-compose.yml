@@ -1,0 +1,16 @@
+# One-command deploy: docker compose up --build
+# API keys are read from .env (never committed). Conversation memory persists
+# in the medmem volume across restarts.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - medmem:/data
+    restart: unless-stopped
+
+volumes:
+  medmem:

@@ -1,3 +1,4 @@
+import os
 import re
 import sqlite3
 from typing import TypedDict
@@ -272,7 +273,10 @@ def get_graph():
     """Compile the agent graph on first use, creating the SQLite checkpointer."""
     global _graph
     if _graph is None:
-        conn = sqlite3.connect("medical_memory.db", check_same_thread=False)
+        # Configurable so Docker can persist it on a mounted volume.
+        db_path = os.environ.get("MEDICAL_MEMORY_DB", "medical_memory.db")
+        os.makedirs(os.path.dirname(os.path.abspath(db_path)), exist_ok=True)
+        conn = sqlite3.connect(db_path, check_same_thread=False)
         memory = SqliteSaver(conn)
         compiled = builder.compile(checkpointer=memory)
         compiled._sqlite_conn = conn  # keep the connection alive for the app lifetime
