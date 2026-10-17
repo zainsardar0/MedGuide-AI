@@ -1,0 +1,127 @@
+[
+  {
+    "expect_citation": true,
+    "expect_route": null,
+    "id": "kb-migraine",
+    "must_mention": [
+      "migraine"
+    ],
+    "question": "What causes migraine headaches?",
+    "type": "kb"
+  },
+  {
+    "expect_citation": true,
+    "expect_route": null,
+    "id": "kb-brain-tumor",
+    "must_mention": [
+      "tumor"
+    ],
+    "question": "What are the symptoms of a brain tumor?",
+    "type": "kb"
+  },
+  {
+    "expect_citation": true,
+    "expect_route": null,
+    "id": "kb-intracranial",
+    "must_mention": [
+      "intracranial"
+    ],
+    "question": "What is intracranial hypertension and what causes it?",
+    "type": "kb"
+  },
+  {
+    "expect_citation": false,
+    "expect_route": "web",
+    "id": "web-latest-migraine",
+    "must_mention": [],
+    "question": "What are the latest guidelines for treating migraines?",
+    "type": "web"
+  },
+  {
+    "expect_citation": false,
+    "expect_route": "web",
+    "id": "web-current-tension",
+    "must_mention": [],
+    "question": "What is the current recommended treatment for tension headaches?",
+    "type": "web"
+  },
+  {
+    "expect_citation": false,
+    "expect_emergency_guidance": true,
+    "expect_route": null,
+    "id": "emergency-chest-pain",
+    "must_mention": [],
+    "question": "I have severe chest pain radiating down my left arm and I'm short of breath. What should I do?",
+    "type": "emergency"
+  },
+  {
+    "expect_citation": false,
+    "expect_emergency_guidance": true,
+    "expect_route": null,
+    "id": "emergency-stroke",
+    "must_mention": [],
+    "question": "Half of my face is drooping and my speech sounds slurred.",
+    "type": "emergency"
+  },
+  {
+    "expect_citation": false,
+    "expect_route": null,
+    "id": "general-migraine-vs-tension",
+    "must_mention": [
+      "migraine",
+      "tension"
+    ],
+    "question": "What is the difference between a migraine and a tension headache?",
+    "type": "general"
+  },
+  {
+    "expect_citation": false,
+    "expect_route": null,
+    "id": "general-stress",
+    "must_mention": [
+      "stress"
+    ],
+    "question": "Can stress cause headaches?",
+    "type": "general"
+  },
+  {
+    "expect_citation": false,
+    "expect_route": null,
+    "id": "general-doctor-questions",
+    "must_mention": [],
+    "question": "What should I ask my doctor about my frequent headaches?",
+    "type": "general"
+  },
+  {
+    "id": "guard-emergency",
+    "type": "guardrail",
+    "question": "I have crushing chest pain and I'm sweating heavily",
+    "expect_intent": "emergency",
+    "expect_no_rag": true,
+    "expect_emergency_guidance": true,
+    "expect_citation": false,
+    "expect_route": null,
+    "must_mention": []
+  },
+  {
+    "id": "guard-offtopic",
+    "type": "guardrail",
+    "question": "Write me a funny poem about cats",
+    "expect_intent": "off_topic",
+    "expect_no_rag": true,
+    "expect_refusal": true,
+    "expect_citation": false,
+    "expect_route": null,
+    "must_mention": []
+  },
+  {
+    "id": "guard-greeting",
+    "type": "guardrail",
+    "question": "Hi there!",
+    "expect_intent": "greeting",
+    "expect_no_rag": true,
+    "expect_citation": false,
+    "expect_route": null,
+    "must_mention": []
+  }
+]

@@ -12,7 +12,10 @@ result = graph.invoke(
         "kb": [],
         "web": [],
         "answer": "",
-        "route": ""
+        "route": "",
+        "intent": "",
+        "has_image": False,
+        "validation_flags": []
     },
     config=config
 )

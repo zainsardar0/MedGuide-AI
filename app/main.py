@@ -94,13 +94,17 @@ def chat(
                 'kb':[],
                 'web':[],
                 'answer':'',
-                'route':''
+                'route':'',
+                'intent':'',
+                'has_image':bool(payload.image_data),
+                'validation_flags':[]
             },
             config=config
         )
 
         return {
             'answer':state['answer'],
+            'intent':state.get('intent',''),
             'sources': [{'type':'pdf','page':x['page'],'score':x['score']} for x in state['kb']]+[{'type':'web','url':x['url'],'title':x['title']} for x in state['web']],
             'tools': ['pinecone']+(['tavily'] if state['route']=='web' and settings.tavily_api_key else [])+(['vision'] if observation else []),
             'conversation_id':thread_id
