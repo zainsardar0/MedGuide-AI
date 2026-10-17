@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="1600" height="1060">
+<rect x="0" y="0" width="1600" height="1060" rx="24" fill="#F7FAFA"/>
+<rect x="0" y="0" width="1600" height="104" rx="24" fill="#0F766E"/>
+<rect x="0" y="80" width="1600" height="24" fill="#0F766E"/>
+<text x="800.0" y="46" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="36" fill="#FFFFFF" text-anchor="middle" font-weight="bold">🏥 MedGuide AI — Agentic Medical Q&amp;A</text>
+<text x="800.0" y="78" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="18" fill="#D7F0ED" text-anchor="middle">Guardrailed retrieval  ·  Deterministic citations  ·  Semantic cache  ·  Streaming answers</text>
+<rect x="42" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="72" cy="172" r="17" fill="#0F766E"/>
+<text x="72" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">1</text>
+<text x="140.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">👤</text>
+<text x="140.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">User</text>
+<line x1="66" y1="270" x2="214" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="64" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Asks health question</text>
+<text x="64" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Chat UI + voice input</text>
+<text x="64" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Conversation history</text>
+<line x1="242" y1="285.0" x2="258" y2="285.0" stroke="#94A3B8" stroke-width="3"/>
+<polygon points="258,277.0 258,293.0 268,285.0" fill="#94A3B8"/>
+<rect x="262" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="292" cy="172" r="17" fill="#1D4ED8"/>
+<text x="292" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">2</text>
+<text x="360.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">🌐</text>
+<text x="360.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">FastAPI Gateway</text>
+<line x1="286" y1="270" x2="434" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="284" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  POST /api/chat</text>
+<text x="284" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  POST /api/chat/stream</text>
+<text x="284" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  SSE token streaming</text>
+<line x1="462" y1="285.0" x2="478" y2="285.0" stroke="#94A3B8" stroke-width="3"/>
+<polygon points="478,277.0 478,293.0 488,285.0" fill="#94A3B8"/>
+<rect x="482" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="512" cy="172" r="17" fill="#7C3AED"/>
+<text x="512" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">3</text>
+<text x="580.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">🛡️</text>
+<text x="580.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">Guardrails</text>
+<line x1="506" y1="270" x2="654" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="504" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Emergency regex</text>
+<text x="504" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Greeting fast-path</text>
+<text x="504" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  LLM classifier (fail-open)</text>
+<line x1="682" y1="285.0" x2="698" y2="285.0" stroke="#94A3B8" stroke-width="3"/>
+<polygon points="698,277.0 698,293.0 708,285.0" fill="#94A3B8"/>
+<rect x="702" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="732" cy="172" r="17" fill="#0D9488"/>
+<text x="732" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">4</text>
+<text x="800.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">⚡</text>
+<text x="800.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">Semantic Cache</text>
+<line x1="726" y1="270" x2="874" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="724" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Embed question</text>
+<text x="724" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Cosine ≥ 0.95 → hit</text>
+<text x="724" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Miss → retrieval</text>
+<line x1="902" y1="285.0" x2="918" y2="285.0" stroke="#94A3B8" stroke-width="3"/>
+<polygon points="918,277.0 918,293.0 928,285.0" fill="#94A3B8"/>
+<rect x="922" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="952" cy="172" r="17" fill="#D97706"/>
+<text x="952" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">5</text>
+<text x="1020.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">🔍</text>
+<text x="1020.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">Retrieval</text>
+<line x1="946" y1="270" x2="1094" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="944" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Pinecone top-5</text>
+<text x="944" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Gale Encyclopedia</text>
+<text x="944" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Tavily web fallback</text>
+<line x1="1122" y1="285.0" x2="1138" y2="285.0" stroke="#94A3B8" stroke-width="3"/>
+<polygon points="1138,277.0 1138,293.0 1148,285.0" fill="#94A3B8"/>
+<rect x="1142" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="1172" cy="172" r="17" fill="#0F766E"/>
+<text x="1172" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">6</text>
+<text x="1240.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">✍️</text>
+<text x="1240.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">Answer + Validate</text>
+<line x1="1166" y1="270" x2="1314" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="1164" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Grounded synthesis</text>
+<text x="1164" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Sources footer in code</text>
+<text x="1164" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  No-diagnosis check</text>
+<line x1="1342" y1="285.0" x2="1358" y2="285.0" stroke="#94A3B8" stroke-width="3"/>
+<polygon points="1358,277.0 1358,293.0 1368,285.0" fill="#94A3B8"/>
+<rect x="1362" y="140" width="196" height="290" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<circle cx="1392" cy="172" r="17" fill="#0E7490"/>
+<text x="1392" y="178" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="bold">7</text>
+<text x="1460.0" y="218" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="34" fill="#123332" text-anchor="middle">💬</text>
+<text x="1460.0" y="254" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#123332" text-anchor="middle" font-weight="bold">Chat UI</text>
+<line x1="1386" y1="270" x2="1534" y2="270" stroke="#D7E3E3" stroke-width="2"/>
+<text x="1384" y="300" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Streamed markdown</text>
+<text x="1384" y="332" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Source chips</text>
+<text x="1384" y="364" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  ⚡ / ⚠ badges</text>
+<rect x="702" y="486" width="636" height="108" fill="#E8F1F3" stroke="#0E7490" stroke-width="2"/>
+<ellipse cx="1020.0" cy="486" rx="318.0" ry="22" fill="#D3E6EB" stroke="#0E7490" stroke-width="2"/>
+<path d="M 702 486 A 318.0 22 0 0 0 1338 486" fill="none" stroke="#0E7490" stroke-width="2"/>
+<ellipse cx="1020.0" cy="594" rx="318.0" ry="22" fill="#E8F1F3" stroke="#0E7490" stroke-width="2"/>
+<text x="1020.0" y="538" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="21" fill="#123332" text-anchor="middle" font-weight="bold">💾 SQLite</text>
+<text x="1020.0" y="566" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="14.5" fill="#3A5A5A" text-anchor="middle">Conversation memory  ·  Semantic cache</text>
+<line x1="800.0" y1="430" x2="800.0" y2="466" stroke="#0E7490" stroke-width="2" stroke-dasharray="7 6"/>
+<line x1="1020.0" y1="430" x2="1020.0" y2="466" stroke="#0E7490" stroke-width="2" stroke-dasharray="7 6"/>
+<line x1="1240.0" y1="430" x2="1240.0" y2="466" stroke="#0E7490" stroke-width="2" stroke-dasharray="7 6"/>
+<rect x="42" y="648" width="990" height="330" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<text x="70" y="688" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="22" fill="#123332" text-anchor="start" font-weight="bold">🧰 Technology Stack</text>
+<line x1="70" y1="702" x2="1004" y2="702" stroke="#D7E3E3" stroke-width="2"/>
+<text x="70" y="740" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#0F766E" text-anchor="start" font-weight="bold">Backend</text>
+<text x="70" y="770" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  FastAPI</text>
+<text x="70" y="808" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  LangGraph</text>
+<text x="70" y="846" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Python 3.11</text>
+<text x="70" y="884" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Pydantic Settings</text>
+<text x="268" y="740" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#7C3AED" text-anchor="start" font-weight="bold">AI &amp; Retrieval</text>
+<text x="268" y="770" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  OpenAI gpt-4.1-mini</text>
+<text x="268" y="808" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Tavily web search</text>
+<text x="268" y="846" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  text-embedding-3-small</text>
+<text x="268" y="884" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Whisper + TTS</text>
+<text x="466" y="740" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#0284C7" text-anchor="start" font-weight="bold">Data</text>
+<text x="466" y="770" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Pinecone</text>
+<text x="466" y="808" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  SQLite</text>
+<text x="466" y="846" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Gale Encyclopedia</text>
+<text x="466" y="884" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Golden eval set</text>
+<text x="664" y="740" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#D97706" text-anchor="start" font-weight="bold">DevOps</text>
+<text x="664" y="770" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Docker</text>
+<text x="664" y="808" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  Compose</text>
+<text x="664" y="846" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  GitHub Actions</text>
+<text x="664" y="884" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  16 keyless tests</text>
+<text x="862" y="740" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#0E7490" text-anchor="start" font-weight="bold">Frontend</text>
+<text x="862" y="770" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  HTML</text>
+<text x="862" y="808" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  CSS</text>
+<text x="862" y="846" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  JavaScript</text>
+<text x="862" y="884" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13.5" fill="#3A5A5A" text-anchor="start">•  SSE streaming</text>
+<rect x="1062" y="648" width="496" height="330" rx="16" fill="#FFFFFF" stroke="#D7E3E3" stroke-width="2"/>
+<text x="1090" y="688" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="22" fill="#123332" text-anchor="start" font-weight="bold">✨ Key Features</text>
+<line x1="1090" y1="702" x2="1530" y2="702" stroke="#D7E3E3" stroke-width="2"/>
+<text x="1090" y="744" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#123332" text-anchor="start">🛡️  Guardrailed input gate</text>
+<text x="1090" y="788" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#123332" text-anchor="start">📚  Deterministic citations</text>
+<text x="1090" y="832" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#123332" text-anchor="start">⚡  Semantic cache</text>
+<text x="1090" y="876" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#123332" text-anchor="start">📡  Streaming answers</text>
+<text x="1090" y="920" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#123332" text-anchor="start">📊  Confidence signals</text>
+<text x="1090" y="964" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="15.5" fill="#123332" text-anchor="start">🧪  Eval + CI safety net</text>
+<text x="800.0" y="1024" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="17" fill="#0F766E" text-anchor="middle" font-weight="bold" letter-spacing="3">SAFER ANSWERS  ·  VERIFIED CITATIONS  ·  FASTER REPEATS</text>
+</svg>
